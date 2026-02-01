@@ -1,0 +1,59 @@
+plugins {
+    id 'java'
+    id 'com.gradleup.shadow' version '9.0.0-beta4'
+}
+
+group = 'sledgemc.dev'
+version = '1.0.0-SNAPSHOT'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://libraries.minecraft.net' }
+    maven { url 'https://maven.fabricmc.net/' }
+    maven { url 'https://repo.spongepowered.org/maven/' }
+}
+
+dependencies {
+    implementation "org.ow2.asm:asm:9.7.1"
+    implementation "org.ow2.asm:asm-commons:9.7.1"
+    implementation "org.ow2.asm:asm-tree:9.7.1"
+    implementation "net.fabricmc:sponge-mixin:0.15.3+mixin.0.8.7"
+    implementation "com.google.code.gson:gson:2.11.0"
+    implementation "com.google.guava:guava:33.3.1-jre"
+    implementation 'net.fabricmc:tiny-remapper:0.10.4'
+    implementation 'net.fabricmc:mapping-io:0.6.1'
+}
+
+jar {
+    manifest {
+        attributes(
+            'Premain-Class': 'sledgemc.dev.agent.SledgeAgent',
+            'Agent-Class': 'sledgemc.dev.agent.SledgeAgent',
+            'Can-Redefine-Classes': 'true',
+            'Can-Retransform-Classes': 'true'
+        )
+    }
+}
+
+shadowJar {
+    archiveBaseName = 'sledge-agent'
+    archiveClassifier = ''
+    mergeServiceFiles()
+    
+    manifest {
+        attributes(
+            'Premain-Class': 'sledgemc.dev.agent.SledgeAgent',
+            'Agent-Class': 'sledgemc.dev.agent.SledgeAgent',
+            'Can-Redefine-Classes': 'true',
+            'Can-Retransform-Classes': 'true'
+        )
+    }
+}
+
+assemble.dependsOn shadowJar
+build.dependsOn shadowJar
